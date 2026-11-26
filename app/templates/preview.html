@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Aperçu des données{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Aperçu des données</h1>
+<p>Bordereau <strong>{{ payload.metadata.numero_bordereau }}</strong> - Année <strong>{{ payload.metadata.annee }}</strong></p>
+<div class="table-responsive">
+<table class="table table-bordered table-hover align-middle">
+    <thead><tr><th>Ligne</th><th>Adhérent</th><th>Numéro bulletin</th><th>Type erreur</th><th>Correction proposée</th><th>Observation</th><th>Statut</th></tr></thead>
+    <tbody>
+    {% for row in records %}
+        <tr>
+            <td>{{ row.ligne }}</td><td>{{ row.adherent }}</td><td class="text-nowrap">{{ row.num_bulletin }}</td>
+            <td>{{ row.type_erreur }} - {{ row.type_erreur_libelle or '' }}</td><td>{{ row.correction_proposee }}</td><td>{{ row.observation or '' }}</td>
+            <td>
+                {% if row.status == 'VALID' %}<span class="badge text-bg-success">VALID</span>
+                {% elif row.status == 'WARNING' %}<span class="badge text-bg-warning">WARNING</span>
+                {% else %}<span class="badge text-bg-danger">ERROR</span>{% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+<a class="btn btn-outline-primary" href="{{ url_for('main.configuration') }}">Configurer les règles</a>
+<a class="btn btn-primary" href="{{ url_for('main.validation') }}">Valider</a>
+{% endblock %}

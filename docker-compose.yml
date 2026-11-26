@@ -1,0 +1,20 @@
+services:
+  app:
+    build: .
+    ports:
+      - "${PORT:-50100}:5000"
+    environment:
+      SECRET_KEY: "${SECRET_KEY:-change-this-secret}"
+      UPLOAD_FOLDER: /app/uploads
+      SQL_FOLDER: /app/generated
+      DATABASE_PATH: /app/instance/app.db
+    volumes:
+      - fassurance_instance:/app/instance
+      - fassurance_uploads:/app/uploads
+      - fassurance_generated:/app/generated
+    restart: unless-stopped
+
+volumes:
+  fassurance_instance:
+  fassurance_uploads:
+  fassurance_generated:

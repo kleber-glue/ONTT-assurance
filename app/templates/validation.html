@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Validation{% endblock %}
+{% block content %}
+<h1 class="h3 mb-4">Validation</h1>
+<div class="row g-3 mb-4">
+    <div class="col-md-4"><div class="card metric"><div class="metric-value">{{ payload.metadata.total_records }}</div><div>Analysées</div></div></div>
+    <div class="col-md-4"><div class="card metric"><div class="metric-value">{{ valid }}</div><div>Validées</div></div></div>
+    <div class="col-md-4"><div class="card metric"><div class="metric-value">{{ invalid }}</div><div>Invalides</div></div></div>
+</div>
+<div class="table-responsive">
+<table class="table table-bordered">
+<thead><tr><th>Ligne</th><th>Statut</th><th>Motifs</th></tr></thead>
+<tbody>
+{% for row in records %}
+<tr><td>{{ row.ligne }}</td><td>{{ row.status }}</td><td>{{ (row.errors + row.warnings) | join(' ') }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+<form method="post" action="{{ url_for('main.generate') }}">
+    <button class="btn btn-success" type="submit">Générer le fichier SQL</button>
+</form>
+{% endblock %}

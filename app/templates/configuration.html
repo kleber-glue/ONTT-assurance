@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}Configuration métier{% endblock %}
+{% macro table_fields(group_index, table_index, table) %}
+<div class="col-12 table-entry">
+    <section class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Table Oracle</span>
+            <button class="btn btn-sm btn-outline-danger remove-table" type="button">Supprimer la table</button>
+        </div>
+        <div class="card-body row g-3">
+            <input type="hidden" name="correspondences[{{ group_index }}][table_ids]" value="{{ table_index }}">
+            <div class="col-md-6">
+                <label class="form-label">Nom de la table Oracle</label>
+                <input class="form-control" name="correspondences[{{ group_index }}][tables][{{ table_index }}][table_name]" value="{{ table.get('table_name') or '' }}" placeholder="EX : DONNEES_ASSURANCE" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Colonne de mise à jour</label>
+                <input class="form-control" name="correspondences[{{ group_index }}][tables][{{ table_index }}][update_column]" value="{{ table.get('update_column') or '' }}" placeholder="EX : NUM_BULLETIN">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Colonne identifiant</label>
+                <input class="form-control" name="correspondences[{{ group_index }}][tables][{{ table_index }}][identifier_column]" value="{{ table.get('identifier_column') or '' }}" placeholder="EX : ID">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Colonne adhérent</label>
+                <input class="form-control" name="correspondences[{{ group_index }}][tables][{{ table_index }}][adherent_column]" value="{{ table.get('adherent_column') or '' }}" placeholder="EX : ADHERENT">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Colonne numéro bulletin</label>
+                <input class="form-control" name="correspondences[{{ group_index }}][tables][{{ table_index }}][bulletin_column]" value="{{ table.get('bulletin_column') or '' }}" placeholder="EX : NUM_BULLETIN">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Colonne numéro bordereau</label>
+                <input class="form-control" name="correspondences[{{ group_index }}][tables][{{ table_index }}][bordereau_column]" value="{{ table.get('bordereau_column') or '' }}" placeholder="EX : NUM_BORDEREAU">
+                <div class="form-text">Saisissez le nom de la colonne, pas le numéro du bordereau.</div>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Type Oracle</label>
+                <input class="form-control" name="correspondences[{{ group_index }}][tables][{{ table_index }}][oracle_type]" value="{{ table.get('oracle_type') or 'VARCHAR2' }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Conditions WHERE complémentaires</label>
+                <input class="form-control" name="correspondences[{{ group_index }}][tables][{{ table_index }}][complementary_where]" value="{{ table.get('complementary_where') or '' }}" placeholder="EX : ANNEE = 2026">
+            </div>
+        </div>
+    </section>
+</div>
+{% endmacro %}
+{% macro correspondence_fields(index, correspondence, error_types, error_type_codes) %}
+<section class="card mb-4 correspondence-section" data-next-table-index="{{ correspondence.get('tables', [])|length }}">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Correspondance globale</span>
+        <button class="btn btn-sm btn-outline-danger remove-correspondence" type="button">Supprimer la correspondance</button>
+    </div>
+    <div class="card-body">
+        <input type="hidden" name="correspondence_ids" value="{{ index }}">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Type d'erreur (JSON)</label>
+                {% set selected_error_type = correspondence.get('error_type') %}
+                <select class="form-select" name="correspondences[{{ index }}][error_type]" required>
+                    <option value="">Sélectionner un type d'erreur</option>
+                    {% if selected_error_type is not none and selected_error_type|string not in error_type_codes %}
+                    <option value="{{ selected_error_type }}" selected>Code erreur {{ selected_error_type }} (absent du JSON chargé)</option>
+                    {% endif %}
+                    {% for error_type in error_types %}
+                    <option value="{{ error_type.code }}" {% if selected_error_type|string == error_type.code %}selected{% endif %}>{{ error_type.label }}</option>
+                    {% endfor %}
+                </select>
+                <div class="form-text">Chaque table de cette correspondance est mise à jour uniquement pour ce code erreur.</div>
+            </div>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h6 mb-0">Tables de cette correspondance</h2>
+            <button class="btn btn-sm btn-outline-primary add-table" type="button">Ajouter une table</button>
+        </div>
+        <div class="table-container row g-3">
+            {% for table in correspondence.get('tables', []) %}
+            {{ table_fields(index, loop.index0, table) }}
+            {% endfor %}
+        </div>
+        <template class="table-template">
+            {{ table_fields(index, "__TABLE_INDEX__", {}) }}
+        </template>
+    </div>
+</section>
+{% endmacro %}
+{% block content %}
+<h1 class="h3 mb-4">Configuration métier Oracle</h1>
+<form method="post">
+    <div class="mb-3">
+        <p class="text-muted mb-2">Associez un code erreur à une ou plusieurs tables Oracle.</p>
+        <button class="btn btn-outline-primary" type="button" id="add-correspondence">Ajouter une correspondance globale</button>
+    </div>
+    <div id="correspondence-container">
+        {% for correspondence in correspondences %}
+        {{ correspondence_fields(loop.index0, correspondence, error_types, error_type_codes) }}
+        {% endfor %}
+    </div>
+    <template id="correspondence-template">
+        {{ correspondence_fields("__GROUP_INDEX__", {"error_type": none, "tables": [{}]}, error_types, error_type_codes) }}
+    </template>
+    <button class="btn btn-primary" type="submit">Enregistrer la configuration</button>
+</form>
+{% endblock %}

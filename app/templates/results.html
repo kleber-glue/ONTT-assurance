@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Résultats{% endblock %}
+{% block content %}
+<h1 class="h3 mb-4">Résultats</h1>
+<div class="card mb-4">
+    <div class="card-body">
+        <p>Bordereau : <strong>{{ payload.metadata.numero_bordereau }}</strong></p>
+        <p>Année : <strong>{{ payload.metadata.annee }}</strong></p>
+        <p>Nombre d'UPDATE générés : <strong>{{ sql_count }}</strong></p>
+        <p>Fichier : <strong>{{ filename }}</strong></p>
+        {% if filename %}
+        <a class="btn btn-success" href="{{ url_for('main.download') }}">Télécharger le SQL</a>
+        {% endif %}
+    </div>
+</div>
+<h2 class="h5">Historique des traitements</h2>
+<div class="table-responsive">
+<table class="table table-striped">
+<thead><tr><th>Fichier</th><th>Bordereau</th><th>Année</th><th>Total</th><th>Valides</th><th>Rejetées</th><th>UPDATE</th><th>SQL</th></tr></thead>
+<tbody>
+{% for row in history %}
+<tr><td>{{ row.source_file }}</td><td>{{ row.numero_bordereau }}</td><td>{{ row.annee }}</td><td>{{ row.total_records }}</td><td>{{ row.valid_records }}</td><td>{{ row.invalid_records }}</td><td>{{ row.sql_count }}</td><td>{{ row.sql_filename }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% endblock %}

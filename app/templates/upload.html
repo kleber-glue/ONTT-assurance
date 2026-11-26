@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Importer un fichier Excel{% endblock %}
+{% block content %}
+<h1 class="h3 mb-4">Importation Excel</h1>
+<div class="card">
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            <label class="drop-zone w-100" for="excel_file">
+                <strong>Sélectionnez un fichier XLSX</strong>
+                <span class="d-block text-muted">Format accepté : .xlsx - taille maximale : 10 Mo</span>
+                <input class="form-control mt-3" type="file" id="excel_file" name="excel_file" accept=".xlsx" required>
+            </label>
+            <input type="hidden" name="sheet" value="">
+            <button class="btn btn-primary mt-3" type="submit">Analyser le fichier</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Tableau de bord{% endblock %}
+{% block content %}
+<h1 class="h3 mb-4">Tableau de bord</h1>
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-2"><div class="card metric"><div class="metric-value">{{ totals.traitements }}</div><div>Traitements</div></div></div>
+    <div class="col-6 col-lg-2"><div class="card metric"><div class="metric-value">{{ totals.fichiers }}</div><div>Fichiers importés</div></div></div>
+    <div class="col-6 col-lg-2"><div class="card metric"><div class="metric-value">{{ totals.lignes }}</div><div>Lignes analysées</div></div></div>
+    <div class="col-6 col-lg-2"><div class="card metric"><div class="metric-value">{{ totals.valides }}</div><div>Lignes valides</div></div></div>
+    <div class="col-6 col-lg-2"><div class="card metric"><div class="metric-value">{{ totals.rejetees }}</div><div>Lignes rejetées</div></div></div>
+    <div class="col-6 col-lg-2"><div class="card metric"><div class="metric-value">{{ totals.scripts }}</div><div>Scripts SQL</div></div></div>
+</div>
+<a class="btn btn-primary" href="{{ url_for('main.upload') }}">Importer un fichier</a>
+<h2 class="h5 mt-5">Derniers traitements</h2>
+<div class="table-responsive">
+<table class="table table-striped align-middle">
+    <thead><tr><th>Fichier</th><th>Feuille</th><th>Bordereau</th><th>Année</th><th>Total</th><th>SQL</th><th>Date</th></tr></thead>
+    <tbody>
+    {% for row in history %}
+        <tr><td>{{ row.source_file }}</td><td>{{ row.sheet_name }}</td><td>{{ row.numero_bordereau }}</td><td>{{ row.annee }}</td><td>{{ row.total_records }}</td><td>{{ row.sql_count }}</td><td>{{ row.created_at }}</td></tr>
+    {% else %}
+        <tr><td colspan="7" class="text-muted">Aucun traitement enregistré.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

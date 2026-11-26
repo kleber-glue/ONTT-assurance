@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Informations du bordereau{% endblock %}
+{% block content %}
+<h1 class="h3 mb-4">Informations du bordereau</h1>
+<div class="card">
+    <div class="card-body">
+        <p class="text-muted">Fichier : <strong>{{ extracted.source_file }}</strong> - Feuille : <strong>{{ extracted.sheet }}</strong></p>
+        <form method="post" class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label" for="numero_bordereau">Numéro du bordereau</label>
+                <input class="form-control" id="numero_bordereau" name="numero_bordereau" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="annee">Année du bordereau</label>
+                <input class="form-control" id="annee" name="annee" type="number" min="1900" max="2200" value="{{ year_hint or '' }}" required>
+            </div>
+            <div class="col-12">
+                <button class="btn btn-primary" type="submit">Afficher l'aperçu</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
